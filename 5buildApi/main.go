@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -29,6 +30,23 @@ var courses []Course
 //middleware
 func (c *Course) IsEmpty() bool {
 	return  c.CourseName == ""
+}
+
+func main(){
+	r:= mux.NewRouter()
+	courses=append(courses, Course{CourseId: "1",CourseName: "react",CoursePrice: 233,Author: &Author{FullName: "Dimuthu",Website: "Youtube"}})
+	courses=append(courses, Course{CourseId: "2",CourseName: "node",CoursePrice: 333,Author: &Author{FullName: "Ravindu",Website: "Youtube"}})
+
+	//routing
+	r.HandleFunc("/",serveHome).Methods("GET")
+	r.HandleFunc("/courses",getAllCourses).Methods("GET")
+	r.HandleFunc("/course/{id}",getOneCourse).Methods("GET")
+	r.HandleFunc("/course",addCourse).Methods("POST")
+	r.HandleFunc("/course/{id}",updateCourse).Methods("PUT")
+	r.HandleFunc("/course/{id}",deleteOneCourse).Methods("DELETE")
+
+	//listen to a port
+	log.Fatal(http.ListenAndServe(":4000",r))
 }
 
 //handle get req
